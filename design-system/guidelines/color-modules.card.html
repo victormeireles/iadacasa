@@ -1,0 +1,22 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Paleta dos módulos" subtitle="Color coding for the cardápio de soluções — one hue per module" -->
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 20px; background: var(--surface-card); }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .chip { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
+  .tile { width: 40px; height: 40px; border-radius: var(--radius-sm); flex: none; }
+  .meta b { display: block; font: var(--fw-bold) 14px var(--font-sans); color: var(--text-strong); }
+  .meta span { font: var(--fw-regular) 11px var(--font-mono); color: var(--text-muted); }
+</style></head>
+<body>
+  <div class="grid">
+    <div class="chip" style="background:var(--mod-ficha-soft)"><div class="tile" style="background:var(--mod-ficha)"></div><div class="meta"><b>Ficha Técnica</b><span>--mod-ficha</span></div></div>
+    <div class="chip" style="background:var(--mod-receitas-soft)"><div class="tile" style="background:var(--mod-receitas)"></div><div class="meta"><b>Receitas</b><span>--mod-receitas</span></div></div>
+    <div class="chip" style="background:var(--mod-estoque-soft)"><div class="tile" style="background:var(--mod-estoque)"></div><div class="meta"><b>Estoque</b><span>--mod-estoque</span></div></div>
+    <div class="chip" style="background:var(--mod-compras-soft)"><div class="tile" style="background:var(--mod-compras)"></div><div class="meta"><b>Compras</b><span>--mod-compras</span></div></div>
+    <div class="chip" style="background:var(--mod-checklist-soft)"><div class="tile" style="background:var(--mod-checklist)"></div><div class="meta"><b>Checklist</b><span>--mod-checklist</span></div></div>
+    <div class="chip" style="background:var(--mod-financeiro-soft)"><div class="tile" style="background:var(--mod-financeiro)"></div><div class="meta"><b>Financeiro</b><span>--mod-financeiro</span></div></div>
+  </div>
+</body></html>

@@ -1,0 +1,19 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Status semânticos" subtitle="Success, warning, danger, info — soft fills & solid" -->
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 20px; background: var(--surface-card); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+  .solid { height: 48px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; display: flex; align-items: center; padding-left: 12px; font: var(--fw-semibold) 13px var(--font-sans); color: #fff; }
+  .soft { height: 30px; border-radius: 0 0 var(--radius-sm) var(--radius-sm); display: flex; align-items: center; padding-left: 12px; font: var(--fw-medium) 11px var(--font-mono); }
+</style></head>
+<body>
+  <div class="grid">
+    <div class="col"><div class="solid" style="background:var(--success)">Sucesso</div><div class="soft" style="background:var(--success-soft); color:var(--green-700)">--success</div></div>
+    <div class="col"><div class="solid" style="background:var(--warning); color:var(--graphite-900)">Atenção</div><div class="soft" style="background:var(--warning-soft); color:var(--mustard-700)">--warning</div></div>
+    <div class="col"><div class="solid" style="background:var(--danger)">Erro</div><div class="soft" style="background:var(--danger-soft); color:var(--wine-700)">--danger</div></div>
+    <div class="col"><div class="solid" style="background:var(--info)">Info</div><div class="soft" style="background:var(--info-soft); color:var(--sage-600)">--info</div></div>
+  </div>
+</body></html>

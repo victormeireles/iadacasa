@@ -1,0 +1,48 @@
+<!-- @dsCard group="Components" viewport="700x420" name="Form controls" subtitle="Input, Textarea, Select, Checkbox, Switch — with labels, hints & errors" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script type="text/babel" src="../../ds-runtime.js"></script>
+<style>
+  body { padding: 28px; background: var(--surface-page); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 28px; align-items: start; max-width: 640px; }
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { Input, Textarea, Select, Checkbox, Switch } = window.IADaCasaDesignSystem_449ba5;
+  function Demo() {
+    return (
+      <div className="grid">
+        <Input label="Nome do prato" placeholder="Hambúrguer da casa" leftIcon={<i data-lucide="utensils" />} required />
+        <Select label="Tipo de operação" placeholder="Selecione" options={['Hamburgueria','Pizzaria','Bar','Restaurante']} />
+        <Input label="Custo por porção" defaultValue="18,90" hint="Em reais (R$)" />
+        <Input label="Margem alvo" error="Informe um valor entre 0 e 100" defaultValue="320" />
+        <div style={{gridColumn:'1 / -1'}}>
+          <Textarea label="Como funciona seu estoque hoje?" placeholder="Conte do seu jeito. A gente organiza depois." rows={3} />
+        </div>
+        <div className="stack">
+          <Checkbox label="Incluir controle de validade" defaultChecked />
+          <Checkbox label="Alertar quando faltar ingrediente" />
+        </div>
+        <div className="stack">
+          <Switch label="Gerar prompts prontos" defaultChecked />
+          <Switch label="Modo passo a passo" />
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+  setTimeout(() => window.lucide && window.lucide.createIcons(), 60);
+</script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+/* ─── Google Fonts (must come before other @import rules) ────────── */
+@import url('https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── IA da Casa — Brand Tokens ─────────────────────────────────── */
+:root {
+  /* Palette — Neutrals */
+  --cream-50:  #FBF7F0;
+  --cream-100: #F5EEE1;
+  --cream-200: #EDE3D2;
+  --cream-300: #E2D5C0;
+  --cream-400: #D2C2A8;
+  --paper:     #FFFDF9;
+
+  --graphite-900: #211E19;
+  --graphite-800: #322D26;
+  --graphite-700: #443E35;
+  --graphite-600: #5A5247;
+  --graphite-500: #6F6657;
+  --graphite-400: #968C7B;
+  --graphite-300: #B9AE9B;
+
+  /* Palette — Green (Primary) */
+  --green-900: #143025;
+  --green-800: #1B3D2E;
+  --green-700: #235139;
+  --green-600: #2E6647;
+  --green-500: #3E7C58;
+  --green-300: #8FB59C;
+  --green-200: #C3DAC9;
+  --green-100: #DEEBE1;
+  --green-50:  #ECF3ED;
+
+  /* Palette — Mustard (Accent) */
+  --mustard-700: #A9761F;
+  --mustard-600: #C28C2A;
+  --mustard-500: #D8A23E;
+  --mustard-400: #E3B85F;
+  --mustard-300: #EDCD8A;
+  --mustard-200: #F4E1B8;
+  --mustard-100: #F9EFD6;
+
+  /* Palette — Terracotta */
+  --terracotta-700: #9C4A2C;
+  --terracotta-600: #B25A38;
+  --terracotta-500: #C46B47;
+  --terracotta-300: #E0A284;
+  --terracotta-200: #EFC8B3;
+  --terracotta-100: #F6E0D3;
+
+  /* Palette — Wine */
+  --wine-800: #5A2029;
+  --wine-700: #6E2A38;
+  --wine-600: #843545;
+  --wine-500: #9A4655;
+  --wine-300: #C58E98;
+  --wine-200: #DEBCC2;
+  --wine-100: #EDD7DB;
+
+  /* Palette — Sage */
+  --sage-600: #4E7E6F;
+  --sage-500: #5F9384;
+  --sage-300: #A4C5BB;
+  --sage-100: #DCEAE5;
+
+  /* Module accent colors */
+  --mod-ficha:          #235139;
+  --mod-ficha-soft:     #DEEBE1;
+  --mod-receitas:       #B25A38;
+  --mod-receitas-soft:  #F6E0D3;
+  --mod-estoque:        #C28C2A;
+  --mod-estoque-soft:   #F9EFD6;
+  --mod-compras:        #6E2A38;
+  --mod-compras-soft:   #EDD7DB;
+  --mod-checklist:      #4E7E6F;
+  --mod-checklist-soft: #DCEAE5;
+  --mod-financeiro:     #322D26;
+  --mod-financeiro-soft:#EDE3D2;
+
+  /* ─── shadcn/ui semantic mapping ─────────────────────────────── */
+  --background:          #FBF7F0;  /* cream-50 */
+  --foreground:          #443E35;  /* graphite-700 */
+
+  --card:                #FFFDF9;  /* paper */
+  --card-foreground:     #443E35;
+
+  --popover:             #FFFDF9;
+  --popover-foreground:  #443E35;
+
+  --primary:             #235139;  /* green-700 */
+  --primary-foreground:  #F4FBF5;
+
+  --secondary:           #F5EEE1;  /* cream-100 */
+  --secondary-foreground:#443E35;
+
+  --muted:               #F5EEE1;
+  --muted-foreground:    #6F6657;  /* graphite-500 */
+
+  --accent:              #D8A23E;  /* mustard-500 */
+  --accent-foreground:   #211E19;
+
+  --destructive:         #6E2A38;  /* wine-700 */
+  --destructive-foreground: #FFFDF9;
+
+  --border:              #E2D5C0;  /* cream-300 */
+  --input:               #E2D5C0;
+  --ring:                #235139;  /* green-700 */
+
+  --radius:              0.75rem;  /* ~12px base, cards use 1.125rem (18px) */
+
+  /* Sidebar */
+  --sidebar:             #FFFDF9;
+  --sidebar-foreground:  #443E35;
+  --sidebar-primary:     #235139;
+  --sidebar-primary-foreground: #F4FBF5;
+  --sidebar-accent:      #F5EEE1;
+  --sidebar-accent-foreground: #443E35;
+  --sidebar-border:      #E2D5C0;
+  --sidebar-ring:        #235139;
+
+  /* Charts (for possible future use) */
+  --chart-1: #235139;
+  --chart-2: #D8A23E;
+  --chart-3: #B25A38;
+  --chart-4: #6E2A38;
+  --chart-5: #4E7E6F;
+
+  /* Brand helpers */
+  --brand:        #235139;
+  --brand-hover:  #1B3D2E;
+  --brand-soft:   #DEEBE1;
+  --brand-strong: #143025;
+}
+
+/* ─── @theme bridge for Tailwind utilities ───────────────────────── */
+@theme inline {
+  --color-background:   var(--background);
+  --color-foreground:   var(--foreground);
+  --color-card:         var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover:      var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary:      var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary:    var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:        var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent:       var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive:  var(--destructive);
+  --color-border:       var(--border);
+  --color-input:        var(--input);
+  --color-ring:         var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar:      var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Brand colors as Tailwind utilities */
+  --color-brand:        var(--brand);
+  --color-brand-hover:  var(--brand-hover);
+  --color-brand-soft:   var(--brand-soft);
+  --color-brand-strong: var(--brand-strong);
+  --color-cream-50:     #FBF7F0;
+  --color-cream-100:    #F5EEE1;
+  --color-cream-200:    #EDE3D2;
+  --color-cream-300:    #E2D5C0;
+  --color-paper:        #FFFDF9;
+  --color-graphite-900: #211E19;
+  --color-graphite-700: #443E35;
+  --color-graphite-500: #6F6657;
+  --color-graphite-400: #968C7B;
+  --color-green-700:    #235139;
+  --color-green-100:    #DEEBE1;
+  --color-green-50:     #ECF3ED;
+  --color-mustard-500:  #D8A23E;
+  --color-mustard-100:  #F9EFD6;
+  --color-wine-700:     #6E2A38;
+  --color-wine-100:     #EDD7DB;
+  --color-terracotta-600: #B25A38;
+  --color-terracotta-100: #F6E0D3;
+  --color-sage-600:     #4E7E6F;
+  --color-sage-100:     #DCEAE5;
+
+  /* Radius */
+  --radius-sm:  calc(var(--radius) * 0.6);
+  --radius-md:  calc(var(--radius) * 0.8);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+
+  /* Fonts */
+  --font-sans:    'Hanken Grotesk', system-ui, sans-serif;
+  --font-display: 'Young Serif', Georgia, serif;
+  --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* ─── Base styles ────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground;
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+}
+
+/* ─── Brand utility classes ──────────────────────────────────────── */
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-mono-brand { font-family: var(--font-mono); }
+
+  .bg-surface-page { background-color: var(--cream-50); }
+  .bg-surface-card { background-color: var(--paper); }
+  .bg-surface-sunken { background-color: var(--cream-100); }
+  .bg-surface-inverse { background-color: var(--green-900); }
+
+  .text-strong { color: var(--graphite-900); }
+  .text-body   { color: var(--graphite-700); }
+  .text-muted-brand { color: var(--graphite-500); }
+  .text-faint  { color: var(--graphite-400); }
+  .text-on-brand { color: #F4FBF5; }
+
+  .border-subtle { border-color: var(--cream-300); }
+  .border-default-brand { border-color: var(--cream-400); }
+
+  .shadow-warm-sm  { box-shadow: 0 1px 3px 0 rgba(33,30,25,0.08); }
+  .shadow-warm-md  { box-shadow: 0 4px 12px 0 rgba(33,30,25,0.10); }
+  .shadow-warm-lg  { box-shadow: 0 8px 24px 0 rgba(33,30,25,0.12); }
+}

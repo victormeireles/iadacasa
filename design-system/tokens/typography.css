@@ -1,0 +1,74 @@
+/* ===========================================================================
+   IA da Casa — Typography tokens
+   Young Serif (display), Hanken Grotesk (UI/body), JetBrains Mono (prompts).
+   =========================================================================== */
+:root {
+  /* Families */
+  --font-display: 'Young Serif', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Weights (Hanken Grotesk) */
+  --fw-light: 300;       /* @kind font */
+  --fw-regular: 400;     /* @kind font */
+  --fw-medium: 500;      /* @kind font */
+  --fw-semibold: 600;    /* @kind font */
+  --fw-bold: 700;        /* @kind font */
+  --fw-extrabold: 800;   /* @kind font */
+
+  /* Type scale — fluid-friendly fixed steps (px) */
+  --fs-display-xl: 64px;  /* hero */
+  --fs-display-lg: 50px;
+  --fs-display-md: 40px;  /* section headers */
+  --fs-h1: 34px;
+  --fs-h2: 27px;
+  --fs-h3: 22px;
+  --fs-h4: 19px;
+  --fs-body-lg: 18px;
+  --fs-body: 16px;        /* default */
+  --fs-body-sm: 14px;
+  --fs-caption: 13px;
+  --fs-overline: 12px;    /* uppercase labels */
+
+  /* Line heights */
+  --lh-tight: 1.08;      /* @kind other */
+  --lh-snug: 1.22;       /* @kind other */
+  --lh-heading: 1.3;     /* @kind other */
+  --lh-body: 1.6;        /* @kind other */
+  --lh-relaxed: 1.7;     /* @kind other */
+
+  /* Letter spacing */
+  --ls-tight: -0.02em;   /* @kind other */
+  --ls-snug: -0.01em;    /* @kind other */
+  --ls-normal: 0;        /* @kind other */
+  --ls-wide: 0.02em;     /* @kind other */
+  --ls-overline: 0.12em; /* @kind other */
+
+  /* Semantic text roles */
+  --text-display: var(--fw-regular) var(--fs-display-lg)/var(--lh-tight) var(--font-display); /* @kind font */
+  --text-heading-font: var(--font-sans); /* @kind font */
+}
+
+/* ---------------------------------------------------------------------------
+   Optional helper classes — components can also just use the tokens directly.
+   --------------------------------------------------------------------------- */
+.ia-display {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color: var(--text-strong);
+}
+.ia-overline {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-overline);
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.ia-mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-body-sm);
+  letter-spacing: -0.01em;
+}

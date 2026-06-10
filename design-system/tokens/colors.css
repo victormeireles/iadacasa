@@ -1,0 +1,126 @@
+/* ===========================================================================
+   IA da Casa — Color tokens
+   Warm, gastronomic, premium. A cream base (never hospital white), a deep
+   herb-green primary, and a supporting family of mustard, terracotta and wine.
+   =========================================================================== */
+:root {
+  /* --- Base neutrals: warm cream -> warm graphite ------------------------- */
+  --cream-50:  #FBF7F0;   /* page background — warm, not white */
+  --cream-100: #F5EEE1;
+  --cream-200: #EDE3D2;
+  --cream-300: #E2D5C0;   /* hairline borders on cream */
+  --cream-400: #D2C2A8;
+
+  --paper:     #FFFDF9;   /* card surface — warm off-white */
+
+  --graphite-900: #211E19; /* near-black, warm — strongest text */
+  --graphite-800: #322D26;
+  --graphite-700: #443E35; /* body text */
+  --graphite-600: #5A5247;
+  --graphite-500: #6F6657; /* muted text */
+  --graphite-400: #968C7B; /* faint text, placeholders */
+  --graphite-300: #B9AE9B;
+
+  /* --- Primary: verde escuro (herb / kitchen green) ----------------------- */
+  --green-900: #143025;
+  --green-800: #1B3D2E;
+  --green-700: #235139;   /* PRIMARY */
+  --green-600: #2E6647;
+  --green-500: #3E7C58;
+  --green-300: #8FB59C;
+  --green-200: #C3DAC9;
+  --green-100: #DEEBE1;
+  --green-50:  #ECF3ED;
+
+  /* --- Accent: dourado / mostarda ---------------------------------------- */
+  --mustard-700: #A9761F;
+  --mustard-600: #C28C2A;
+  --mustard-500: #D8A23E;  /* ACCENT */
+  --mustard-400: #E3B85F;
+  --mustard-300: #EDCD8A;
+  --mustard-200: #F4E1B8;
+  --mustard-100: #F9EFD6;
+
+  /* --- Terracotta --------------------------------------------------------- */
+  --terracotta-700: #9C4A2C;
+  --terracotta-600: #B25A38;
+  --terracotta-500: #C46B47;
+  --terracotta-300: #E0A284;
+  --terracotta-200: #EFC8B3;
+  --terracotta-100: #F6E0D3;
+
+  /* --- Wine (vinho) ------------------------------------------------------- */
+  --wine-800: #5A2029;
+  --wine-700: #6E2A38;
+  --wine-600: #843545;
+  --wine-500: #9A4655;
+  --wine-300: #C58E98;
+  --wine-200: #DEBCC2;
+  --wine-100: #EDD7DB;
+
+  /* --- Sage (cool herb — for cooler module accents) ----------------------- */
+  --sage-600: #4E7E6F;
+  --sage-500: #5F9384;
+  --sage-300: #A4C5BB;
+  --sage-100: #DCEAE5;
+
+  /* =========================================================================
+     SEMANTIC ALIASES — reach for these in components, not the raw scale above.
+     ========================================================================= */
+
+  /* Surfaces */
+  --surface-page:    var(--cream-50);
+  --surface-sunken:  var(--cream-100);
+  --surface-card:    var(--paper);
+  --surface-inverse: var(--green-900);
+  --surface-overlay: rgba(33, 30, 25, 0.46);
+
+  /* Text */
+  --text-strong:   var(--graphite-900);
+  --text-body:     var(--graphite-700);
+  --text-muted:    var(--graphite-500);
+  --text-faint:    var(--graphite-400);
+  --text-on-brand: #F4FBF5;
+  --text-on-accent: var(--graphite-900);
+  --text-link:     var(--green-700);
+
+  /* Borders */
+  --border-subtle:  var(--cream-300);
+  --border-default: var(--cream-400);
+  --border-strong:  var(--graphite-300);
+  --border-brand:   var(--green-700);
+
+  /* Brand */
+  --brand:          var(--green-700);
+  --brand-strong:   var(--green-900);
+  --brand-soft:     var(--green-100);
+  --brand-hover:    var(--green-800);
+  --accent:         var(--mustard-500);
+  --accent-strong:  var(--mustard-700);
+  --accent-soft:    var(--mustard-100);
+
+  /* Status */
+  --success:      var(--green-600);
+  --success-soft: var(--green-100);
+  --warning:      var(--mustard-600);
+  --warning-soft: var(--mustard-100);
+  --danger:       var(--wine-700);
+  --danger-soft:  var(--wine-100);
+  --info:         var(--sage-600);
+  --info-soft:    var(--sage-100);
+
+  /* Module accents — the "cardápio de soluções" colour coding.
+     Each module owns a hue: a strong line/icon colour + a soft tint fill. */
+  --mod-ficha:        var(--green-700);
+  --mod-ficha-soft:   var(--green-100);
+  --mod-receitas:     var(--terracotta-600);
+  --mod-receitas-soft:var(--terracotta-100);
+  --mod-estoque:      var(--mustard-600);
+  --mod-estoque-soft: var(--mustard-100);
+  --mod-compras:      var(--wine-700);
+  --mod-compras-soft: var(--wine-100);
+  --mod-checklist:    var(--sage-600);
+  --mod-checklist-soft:var(--sage-100);
+  --mod-financeiro:   var(--graphite-800);
+  --mod-financeiro-soft: var(--cream-200);
+}

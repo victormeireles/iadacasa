@@ -1,0 +1,19 @@
+<!-- @dsCard group="Colors" viewport="700x170" name="Superfícies & texto" subtitle="Page, sunken, card, inverse — and warm text roles" -->
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 20px; background: var(--surface-page); display: flex; gap: 14px; }
+  .surf { flex: 1; height: 120px; border-radius: var(--radius-md); padding: 12px; font: var(--fw-medium) 11px var(--font-mono); }
+  .page { background: var(--surface-page); border: 1px solid var(--border-default); color: var(--text-muted); }
+  .sunken { background: var(--surface-sunken); color: var(--text-muted); }
+  .card { background: var(--surface-card); box-shadow: var(--shadow-sm); color: var(--text-muted); }
+  .inverse { background: var(--surface-inverse); color: var(--green-200); }
+  .txt { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; font-family: var(--font-sans); font-size: 13px; }
+</style></head>
+<body>
+  <div class="surf page">surface-page<div class="txt"><span style="color:var(--text-strong)">strong</span><span style="color:var(--text-body)">body</span><span style="color:var(--text-muted)">muted</span><span style="color:var(--text-faint)">faint</span></div></div>
+  <div class="surf sunken">surface-sunken</div>
+  <div class="surf card">surface-card</div>
+  <div class="surf inverse">surface-inverse<div class="txt"><span style="color:#F4FBF5">on-brand</span><span style="color:var(--green-200)">green-200</span></div></div>
+</body></html>

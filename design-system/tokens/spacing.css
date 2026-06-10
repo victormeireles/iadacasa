@@ -1,0 +1,40 @@
+/* ===========================================================================
+   IA da Casa — Spacing & layout tokens
+   4px base grid. Generous, well-separated layouts.
+   =========================================================================== */
+:root {
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+  --space-12: 96px;
+  --space-13: 128px;
+
+  /* Radii — generous, friendly rounding */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;   /* cards */
+  --radius-xl: 26px;   /* feature panels */
+  --radius-2xl: 36px;
+  --radius-pill: 999px;
+
+  /* Container widths */
+  --container-sm: 640px;
+  --container-md: 880px;
+  --container-lg: 1120px;
+  --container-xl: 1280px;
+
+  /* Control heights */
+  --control-sm: 36px;
+  --control-md: 44px;   /* min touch target */
+  --control-lg: 54px;
+}

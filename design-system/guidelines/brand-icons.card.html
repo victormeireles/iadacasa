@@ -1,0 +1,35 @@
+<!-- @dsCard group="Brand" viewport="700x190" name="Iconografia — Lucide" subtitle="Line icons, 2px rounded stroke. Module icons + UI set" -->
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: 24px 28px; background: var(--surface-card); }
+  .lbl { font: var(--fw-semibold) var(--fs-overline) var(--font-sans); letter-spacing: var(--ls-overline); text-transform: uppercase; color: var(--text-muted); margin: 0 0 12px; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ic { width: 48px; height: 48px; border-radius: var(--radius-md); background: var(--surface-sunken); display: flex; align-items: center; justify-content: center; color: var(--brand); }
+  .ic.mod { background: var(--brand-soft); }
+  .ic i { width: 24px; height: 24px; }
+</style></head>
+<body>
+  <p class="lbl">Módulos</p>
+  <div class="row">
+    <span class="ic mod"><i data-lucide="clipboard-list"></i></span>
+    <span class="ic mod"><i data-lucide="cooking-pot"></i></span>
+    <span class="ic mod"><i data-lucide="package"></i></span>
+    <span class="ic mod"><i data-lucide="shopping-cart"></i></span>
+    <span class="ic mod"><i data-lucide="list-checks"></i></span>
+    <span class="ic mod"><i data-lucide="wallet"></i></span>
+  </div>
+  <p class="lbl">Interface</p>
+  <div class="row">
+    <span class="ic"><i data-lucide="sparkles"></i></span>
+    <span class="ic"><i data-lucide="search"></i></span>
+    <span class="ic"><i data-lucide="plus"></i></span>
+    <span class="ic"><i data-lucide="arrow-right"></i></span>
+    <span class="ic"><i data-lucide="settings"></i></span>
+    <span class="ic"><i data-lucide="circle-check"></i></span>
+    <span class="ic"><i data-lucide="chef-hat"></i></span>
+  </div>
+  <script>setTimeout(()=>window.lucide&&window.lucide.createIcons(),60);</script>
+</body></html>

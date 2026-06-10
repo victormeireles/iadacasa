@@ -1,0 +1,66 @@
+<!-- @dsCard group="App" viewport="1120x780" name="App — cardápio → módulo → Receita do Sistema" subtitle="Interactive: pick a module, answer the questionário, get the System Recipe" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IA da Casa</title>
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="app.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script type="text/babel" src="../../ds-runtime.js"></script>
+<script src="data.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="AppShell.jsx"></script>
+<script type="text/babel" src="CardapioScreen.jsx"></script>
+<script type="text/babel" src="ModuloScreen.jsx"></script>
+<script type="text/babel" src="ReceitaScreen.jsx"></script>
+<script type="text/babel">
+  const { useState, useEffect } = React;
+  const DATA = window.IA_APP_DATA;
+
+  function App() {
+    const [screen, setScreen] = useState('cardapio'); // cardapio | modulo | receita
+    const [module, setModule] = useState(DATA.modules[0]);
+
+    useEffect(() => {
+      const id = setTimeout(() => window.lucide && window.lucide.createIcons(), 30);
+      window.scrollTo(0, 0);
+      return () => clearTimeout(id);
+    }, [screen]);
+
+    const progress = screen === 'cardapio' ? null
+      : screen === 'modulo' ? 'Montando · Passo 2 de 4'
+      : 'Receita pronta';
+
+    return (
+      <>
+        <AppTopbar
+          restaurant={DATA.restaurant}
+          progress={progress}
+          onHome={() => setScreen('cardapio')}
+        />
+        {screen === 'cardapio' && (
+          <CardapioScreen data={DATA} onPick={(m) => { setModule(m); setScreen('modulo'); }} />
+        )}
+        {screen === 'modulo' && (
+          <ModuloScreen data={DATA} module={module}
+            onBack={() => setScreen('cardapio')}
+            onGenerate={() => setScreen('receita')} />
+        )}
+        {screen === 'receita' && (
+          <ReceitaScreen data={DATA} module={module} onBack={() => setScreen('modulo')} />
+        )}
+      </>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
