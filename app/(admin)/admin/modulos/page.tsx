@@ -60,7 +60,7 @@ export default async function AdminModulosPage() {
                 </td>
                 <td className="px-5 py-3.5">
                   <div className="flex items-center justify-end gap-2">
-                    <Link href={`/app/solucoes/${module.slug}`} className="flex h-8 w-8 items-center justify-center rounded-lg text-[#968C7B] hover:bg-[#F5EEE1] hover:text-[#443E35] transition-colors" title="Visualizar">
+                    <Link href={`/admin/modulos/${module.id}/preview`} className="flex h-8 w-8 items-center justify-center rounded-lg text-[#968C7B] hover:bg-[#F5EEE1] hover:text-[#443E35] transition-colors" title="Visualizar">
                       <Eye className="h-4 w-4" />
                     </Link>
                     <Link href={`/admin/modulos/${module.id}`} className="flex h-8 w-8 items-center justify-center rounded-lg text-[#968C7B] hover:bg-[#F5EEE1] hover:text-[#235139] transition-colors" title="Editar">
