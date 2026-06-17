@@ -21,7 +21,7 @@ export async function createKnowledgeBlock(input: Partial<KnowledgeBlock>) {
 
   if (error) return { error: error.message }
 
-  revalidatePath('/admin/blocos')
+  revalidatePath('/admin/modulos/globais')
   return { data }
 }
 
@@ -43,7 +43,7 @@ export async function updateKnowledgeBlock(id: string, input: Partial<KnowledgeB
 
   if (error) return { error: error.message }
 
-  revalidatePath('/admin/blocos')
+  revalidatePath('/admin/modulos/globais')
   return { data }
 }
 
@@ -60,6 +60,6 @@ export async function archiveKnowledgeBlock(id: string) {
 
   if (error) return { error: error.message }
 
-  revalidatePath('/admin/blocos')
+  revalidatePath('/admin/modulos/globais')
   return { data }
 }

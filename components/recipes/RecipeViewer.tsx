@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Download, ExternalLink } from 'lucide-react'
+import { Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { GeneratedPackage, ChecklistItem } from '@/types/database'

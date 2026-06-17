@@ -14,7 +14,6 @@ export default async function ClientLayout({ children }: { children: React.React
 
   // In mock mode use mock restaurant; otherwise fetch real one
   let restaurantName: string | undefined
-  const pathname = '' // layout doesn't have access to pathname
 
   if (!isSupabaseConfigured()) {
     restaurantName = MOCK_RESTAURANT.name
@@ -33,7 +32,12 @@ export default async function ClientLayout({ children }: { children: React.React
   }
 
   return (
-    <AppShell restaurantName={restaurantName} userName={user.name}>
+    <AppShell
+      restaurantName={restaurantName}
+      userName={user.name}
+      userEmail={user.email}
+      userRole={user.role}
+    >
       {children}
     </AppShell>
   )

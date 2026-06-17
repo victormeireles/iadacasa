@@ -18,6 +18,8 @@ import ReactMarkdown from 'react-markdown'
 interface KnowledgeBlockEditorProps {
   initialData?: Partial<KnowledgeBlock>
   blockId?: string
+  returnPath?: string
+  allowedTypes?: KnowledgeBlockType[]
 }
 
 const BLOCK_TYPES: Array<{ value: KnowledgeBlockType; label: string }> = [
@@ -31,13 +33,22 @@ const BLOCK_TYPES: Array<{ value: KnowledgeBlockType; label: string }> = [
   { value: 'implementation_guide', label: 'Guia de implementação' },
 ]
 
-export function KnowledgeBlockEditor({ initialData, blockId }: KnowledgeBlockEditorProps) {
+export function KnowledgeBlockEditor({
+  initialData,
+  blockId,
+  returnPath = '/admin/modulos/globais',
+  allowedTypes,
+}: KnowledgeBlockEditorProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const typeOptions = allowedTypes
+    ? BLOCK_TYPES.filter(t => allowedTypes.includes(t.value))
+    : BLOCK_TYPES
+  const defaultType = typeOptions[0]?.value ?? 'base'
   const [form, setForm] = useState({
     title:            initialData?.title ?? '',
     slug:             initialData?.slug ?? '',
-    type:             initialData?.type ?? 'base' as KnowledgeBlockType,
+    type:             initialData?.type ?? defaultType as KnowledgeBlockType,
     status:           initialData?.status ?? 'draft' as KnowledgeBlockStatus,
     content_markdown: initialData?.content_markdown ?? '',
     version:          initialData?.version ?? 1,
@@ -63,7 +74,7 @@ export function KnowledgeBlockEditor({ initialData, blockId }: KnowledgeBlockEdi
     }
 
     toast.success(archive ? 'Bloco arquivado.' : blockId ? 'Bloco atualizado!' : 'Bloco criado!')
-    router.push('/admin/blocos')
+    router.push(returnPath)
   }
 
   return (
@@ -85,7 +96,7 @@ export function KnowledgeBlockEditor({ initialData, blockId }: KnowledgeBlockEdi
             <Label className="text-sm font-medium text-[#443E35]">Tipo *</Label>
             <Select value={form.type} onValueChange={v => setForm(p => ({ ...p, type: v as KnowledgeBlockType }))}>
               <SelectTrigger className="border-[#E2D5C0]"><SelectValue /></SelectTrigger>
-              <SelectContent>{BLOCK_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
+              <SelectContent>{typeOptions.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">

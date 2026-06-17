@@ -20,6 +20,9 @@ export default async function AdminModulosPage() {
         <div>
           <h1 className="text-2xl font-semibold text-[#211E19] mb-1">Módulos</h1>
           <p className="text-[#6F6657]">{modules.length} módulo{modules.length !== 1 ? 's' : ''} cadastrado{modules.length !== 1 ? 's' : ''}.</p>
+          <Link href="/admin/modulos/globais" className="inline-block text-sm text-[#235139] hover:underline mt-2">
+            Blocos globais da plataforma
+          </Link>
         </div>
         <Link href="/admin/modulos/novo">
           <Button className="bg-[#235139] hover:bg-[#1B3D2E] text-white shrink-0">

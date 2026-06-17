@@ -111,6 +111,28 @@ export interface KnowledgeBlock {
   updated_at: string
 }
 
+export type ModuleKnowledgeBlockUsageType =
+  | 'required_context'
+  | 'optional_context'
+  | 'dependency'
+  | 'checklist'
+  | 'prompt'
+  | 'rule'
+
+export interface ModuleKnowledgeBlock {
+  id: string
+  module_id: string
+  knowledge_block_id: string
+  usage_type: ModuleKnowledgeBlockUsageType
+  required: boolean
+  condition?: string | null
+  order_index: number
+}
+
+export interface ModuleKnowledgeBlockWithBlock extends ModuleKnowledgeBlock {
+  knowledge_block: KnowledgeBlock
+}
+
 export interface DiagnosticQuestion {
   id: string
   module_id: string | null   // null = base diagnosis question

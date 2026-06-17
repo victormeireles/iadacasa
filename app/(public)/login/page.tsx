@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { clearMockLoggedOut } from '@/lib/auth/mock-session'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
@@ -22,7 +23,7 @@ export default function LoginPage() {
     const supabase = createClient()
 
     if (!supabase) {
-      // Mock mode — accept any credentials
+      clearMockLoggedOut()
       toast.success('Bem-vindo de volta!')
       router.push('/app/dashboard')
       return

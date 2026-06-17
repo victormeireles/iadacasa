@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Legacy design-system prototypes (not part of the Next.js app)
+    "design-system/**",
   ]),
 ]);
 

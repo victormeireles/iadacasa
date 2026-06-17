@@ -3,7 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { generatePackage } from '@/lib/services/package-generator'
-import { getBlocksByType } from '@/lib/db/knowledge-blocks'
+import { getInstalledModulesForRestaurant } from '@/lib/db/installations'
 import type { GeneratedPackage, ChecklistItem } from '@/types/database'
 
 export interface GeneratePackageInput {
@@ -15,7 +15,6 @@ export interface GeneratePackageInput {
   segment: string
   baseAnswers: Record<string, unknown>
   moduleAnswers: Record<string, unknown>
-  installedModules: Array<{ name: string; version: string }>
 }
 
 export async function generateAndSavePackage(input: GeneratePackageInput) {
@@ -41,11 +40,9 @@ export async function generateAndSavePackage(input: GeneratePackageInput) {
     answers_json: input.moduleAnswers,
   }, { onConflict: 'restaurant_id,module_id' })
 
-  // Get real knowledge blocks from DB
-  const globalRuleBlocks = await getBlocksByType('global_rule')
-  const globalRules = globalRuleBlocks.map(b => b.content_markdown).join('\n\n---\n\n')
+  // Generate recipe (module blocks + global blocks on first module)
+  const installedModules = await getInstalledModulesForRestaurant(input.restaurantId)
 
-  // Generate recipe
   const recipe = await generatePackage({
     restaurantId: input.restaurantId,
     userId: user.id,
@@ -56,7 +53,7 @@ export async function generateAndSavePackage(input: GeneratePackageInput) {
     segment: input.segment,
     baseAnswers: input.baseAnswers,
     moduleAnswers: input.moduleAnswers,
-    installedModules: input.installedModules,
+    installedModules,
   })
 
   // Save package to DB

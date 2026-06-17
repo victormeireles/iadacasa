@@ -1,4 +1,6 @@
+import { cookies } from 'next/headers'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { isMockLoggedOutCookie, MOCK_LOGGED_OUT_COOKIE } from '@/lib/auth/mock-session'
 import type { SessionUser } from '@/types/users'
 import { MOCK_USER } from '@/lib/mock/users'
 
@@ -10,7 +12,11 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   const supabase = await createServerSupabaseClient()
 
   if (!supabase) {
-    // Supabase not configured — return mock user so the UI works
+    const cookieStore = await cookies()
+    const mockLoggedOut = isMockLoggedOutCookie(
+      cookieStore.get(MOCK_LOGGED_OUT_COOKIE)?.value
+    )
+    if (mockLoggedOut) return null
     return MOCK_USER
   }
 

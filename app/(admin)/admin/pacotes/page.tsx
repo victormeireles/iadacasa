@@ -1,5 +1,4 @@
-import Link from 'next/link'
-import { FileText, ArrowRight } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { getAllPackages } from '@/lib/db/packages'
 import { formatDateTime } from '@/lib/utils'
 

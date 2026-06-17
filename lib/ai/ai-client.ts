@@ -20,10 +20,7 @@ export interface AICompletionOptions {
   temperature?: number
 }
 
-export async function aiComplete(
-  messages: AIMessage[],
-  options: AICompletionOptions = {}
-): Promise<string> {
+export async function aiComplete(messages: AIMessage[]): Promise<string> {
   const provider = (process.env.AI_PROVIDER ?? 'mock') as AIProvider
 
   if (provider === 'mock' || !process.env.AI_API_KEY) {

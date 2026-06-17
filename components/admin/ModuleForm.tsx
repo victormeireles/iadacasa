@@ -10,14 +10,16 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { slugify } from '@/lib/utils'
 import { createModule, updateModule } from '@/app/actions/modules'
-import type { Module } from '@/types/database'
+import { ModuleKnowledgeBlocksPanel } from '@/components/admin/ModuleKnowledgeBlocksPanel'
+import type { Module, ModuleKnowledgeBlockWithBlock } from '@/types/database'
 
 interface ModuleFormProps {
   initialData?: Partial<Module>
   moduleId?: string
+  knowledgeBlocks?: ModuleKnowledgeBlockWithBlock[]
 }
 
-export function ModuleForm({ initialData, moduleId }: ModuleFormProps) {
+export function ModuleForm({ initialData, moduleId, knowledgeBlocks = [] }: ModuleFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
@@ -50,8 +52,14 @@ export function ModuleForm({ initialData, moduleId }: ModuleFormProps) {
       return
     }
 
-    toast.success(moduleId ? 'Módulo atualizado!' : 'Módulo criado!')
-    router.push('/admin/modulos')
+    toast.success(moduleId ? 'Módulo atualizado!' : 'Módulo criado! Agora adicione os blocos de conhecimento.')
+    if (moduleId) {
+      router.push('/admin/modulos')
+    } else if (result.data?.id) {
+      router.push(`/admin/modulos/${result.data.id}`)
+    } else {
+      router.push('/admin/modulos')
+    }
   }
 
   return (
@@ -114,6 +122,20 @@ export function ModuleForm({ initialData, moduleId }: ModuleFormProps) {
           </div>
         </div>
       </div>
+
+      {moduleId ? (
+        <ModuleKnowledgeBlocksPanel
+          key={knowledgeBlocks.map(b => b.id).join('-')}
+          moduleId={moduleId}
+          initialBlocks={knowledgeBlocks}
+        />
+      ) : (
+        <div className="rounded-[18px] border border-dashed border-[#E2D5C0] bg-[#FBF7F0] p-6 text-center">
+          <p className="text-sm text-[#6F6657]">
+            Salve o módulo primeiro para adicionar blocos de conhecimento.
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
         <Button type="button" variant="outline" onClick={() => router.back()} className="border-[#E2D5C0] text-[#443E35] hover:bg-[#F5EEE1]">Cancelar</Button>

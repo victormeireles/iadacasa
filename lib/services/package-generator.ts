@@ -2,12 +2,20 @@
  * Package Generator Service
  *
  * Orchestrates the generation of a System Recipe (Receita do Sistema).
- * Fetches knowledge blocks, combines context, calls the AI layer.
+ * Fetches module-specific blocks via module_knowledge_blocks, injects global
+ * blocks (base + global_rule) only on the restaurant's first module.
  */
 
 import { generateSystemRecipe } from '@/lib/ai/generate-system-recipe'
-import { MOCK_KNOWLEDGE_BLOCKS } from '@/lib/mock/knowledge-blocks'
-import type { GeneratedPackage } from '@/types/database'
+import { getBlocksForModule } from '@/lib/db/module-knowledge-blocks'
+import { isFirstModuleForRestaurant } from '@/lib/db/installations'
+import { getGlobalKnowledgeBlocks } from '@/lib/db/knowledge-blocks'
+import type {
+  GeneratedPackage,
+  KnowledgeBlock,
+  ModuleKnowledgeBlockUsageType,
+  ModuleKnowledgeBlockWithBlock,
+} from '@/types/database'
 import type { SystemRecipeOutput } from '@/types/recipes'
 
 export interface PackageGeneratorInput {
@@ -23,18 +31,66 @@ export interface PackageGeneratorInput {
   installedModules: Array<{ name: string; version: string }>
 }
 
+function globalBlocksAsModuleLinks(
+  globals: KnowledgeBlock[],
+  moduleId: string
+): ModuleKnowledgeBlockWithBlock[] {
+  return globals.map((block, index) => ({
+    id: `global-${block.id}`,
+    module_id: moduleId,
+    knowledge_block_id: block.id,
+    usage_type: (block.type === 'base' ? 'dependency' : 'rule') as ModuleKnowledgeBlockUsageType,
+    required: true,
+    condition: null,
+    order_index: index,
+    knowledge_block: block,
+  }))
+}
+
+function resolveBlocks(blocks: ModuleKnowledgeBlockWithBlock[]) {
+  const active = blocks.filter(b => b.knowledge_block.status === 'active')
+
+  const promptBlock = active.find(b =>
+    b.usage_type === 'prompt' || b.knowledge_block.type === 'module'
+  )
+  const moduleMarkdown = promptBlock?.knowledge_block.content_markdown
+    ?? active.find(b => b.knowledge_block.type === 'module')?.knowledge_block.content_markdown
+    ?? ''
+
+  const ruleBlocks = active.filter(b =>
+    b.usage_type === 'rule' || b.knowledge_block.type === 'global_rule'
+  )
+  const contextBlocks = active.filter(b =>
+    ['required_context', 'optional_context', 'dependency'].includes(b.usage_type)
+    && b.knowledge_block.type !== 'module'
+  )
+
+  const globalRules = [
+    ...contextBlocks.map(b => b.knowledge_block.content_markdown),
+    ...ruleBlocks.map(b => b.knowledge_block.content_markdown),
+  ].join('\n\n---\n\n')
+
+  const sourceBlockIds = active.map(b => b.knowledge_block_id)
+
+  return { moduleMarkdown, globalRules, sourceBlockIds }
+}
+
 export async function generatePackage(input: PackageGeneratorInput): Promise<SystemRecipeOutput> {
-  // 1. Collect knowledge blocks
-  const moduleBlock = MOCK_KNOWLEDGE_BLOCKS.find(
-    b => b.type === 'module' && b.slug.includes(input.moduleSlug.replace('-', ''))
-  ) ?? MOCK_KNOWLEDGE_BLOCKS.find(b => b.type === 'module')
+  const isFirstModule = await isFirstModuleForRestaurant(
+    input.restaurantId,
+    input.moduleId
+  )
 
-  const globalRules = MOCK_KNOWLEDGE_BLOCKS
-    .filter(b => b.type === 'global_rule' && b.status === 'active')
-    .map(b => b.content_markdown)
-    .join('\n\n---\n\n')
+  const moduleBlocks = await getBlocksForModule(input.moduleId)
+  const globalBlocks = isFirstModule ? await getGlobalKnowledgeBlocks() : []
 
-  // 2. Generate recipe via AI layer
+  const allBlocks = [
+    ...globalBlocksAsModuleLinks(globalBlocks, input.moduleId),
+    ...moduleBlocks,
+  ]
+
+  const { moduleMarkdown, globalRules, sourceBlockIds } = resolveBlocks(allBlocks)
+
   const recipe = await generateSystemRecipe({
     restaurantName: input.restaurantName,
     segment: input.segment,
@@ -43,11 +99,14 @@ export async function generatePackage(input: PackageGeneratorInput): Promise<Sys
     installedModules: input.installedModules,
     baseAnswers: input.baseAnswers,
     moduleAnswers: input.moduleAnswers,
-    moduleMarkdown: moduleBlock?.content_markdown ?? '',
+    moduleMarkdown,
     globalRules,
   })
 
-  return recipe
+  return {
+    ...recipe,
+    sourceBlockIds: recipe.sourceBlockIds.length > 0 ? recipe.sourceBlockIds : sourceBlockIds,
+  }
 }
 
 export function buildGeneratedPackageRecord(

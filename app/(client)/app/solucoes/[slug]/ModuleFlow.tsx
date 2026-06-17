@@ -21,7 +21,7 @@ interface ModuleFlowProps {
   userId: string
 }
 
-export function ModuleFlow({ module, baseQuestions, moduleQuestions, restaurant, userId }: ModuleFlowProps) {
+export function ModuleFlow({ module, baseQuestions, moduleQuestions, restaurant }: ModuleFlowProps) {
   const router = useRouter()
   const [step, setStep] = useState<FlowStep>('intro')
   const [baseAnswers, setBaseAnswers] = useState<Record<string, unknown>>({})
@@ -64,7 +64,6 @@ export function ModuleFlow({ module, baseQuestions, moduleQuestions, restaurant,
         segment: restaurant.segment,
         baseAnswers,
         moduleAnswers,
-        installedModules: [],
       })
 
       if (result.error) throw new Error(result.error)

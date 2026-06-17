@@ -1,13 +1,12 @@
 import Link from 'next/link'
-import { Puzzle, BookOpen, Package, Users, ArrowRight } from 'lucide-react'
+import { Puzzle, Package, Users, ArrowRight } from 'lucide-react'
 import { getAllModules } from '@/lib/db/modules'
 import { getAllKnowledgeBlocks } from '@/lib/db/knowledge-blocks'
 import { getAllPackages } from '@/lib/db/packages'
 import { getAllProfiles } from '@/lib/db/profiles'
 
 const QUICK_LINKS = [
-  { href: '/admin/modulos',  icon: Puzzle,   label: 'Módulos',                 desc: 'Criar, editar e publicar módulos do cardápio',      color: 'bg-[#DEEBE1] text-[#235139]' },
-  { href: '/admin/blocos',   icon: BookOpen,  label: 'Blocos de conhecimento',  desc: 'Gerenciar documentos, prompts e regras',            color: 'bg-[#F6E0D3] text-[#B25A38]' },
+  { href: '/admin/modulos',  icon: Puzzle,   label: 'Módulos',                 desc: 'Criar, editar módulos e seus blocos de conhecimento', color: 'bg-[#DEEBE1] text-[#235139]' },
   { href: '/admin/pacotes',  icon: Package,   label: 'Pacotes gerados',         desc: 'Histórico de Receitas do Sistema geradas',          color: 'bg-[#F9EFD6] text-[#C28C2A]' },
   { href: '/admin/usuarios', icon: Users,     label: 'Usuários',                desc: 'Clientes e restaurantes cadastrados',               color: 'bg-[#EDD7DB] text-[#6E2A38]' },
 ]
@@ -30,7 +29,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold text-[#211E19] mb-1">Painel Admin</h1>
-        <p className="text-[#6F6657]">Gerencie módulos, blocos de conhecimento e acompanhe os clientes.</p>
+        <p className="text-[#6F6657]">Gerencie módulos (com blocos de conhecimento) e acompanhe os clientes.</p>
       </div>
 
       {/* Stats */}

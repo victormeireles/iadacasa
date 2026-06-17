@@ -1,17 +1,22 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-const PUBLIC_PATHS = ['/', '/login', '/cadastro', '/sobre', '/termos', '/privacidade']
-
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const isPublic = PUBLIC_PATHS.some(p => pathname === p) || pathname.startsWith('/_next') || pathname.startsWith('/api/public')
 
   // When Supabase is not configured, allow all routes (mock mode)
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    // Mock mode: just let everything through
+    const mockLoggedOut = request.cookies.get('mock_logged_out')?.value === '1'
+    const isProtected = pathname.startsWith('/app') || pathname.startsWith('/admin')
+
+    if (isProtected && mockLoggedOut) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
     return NextResponse.next()
   }
 

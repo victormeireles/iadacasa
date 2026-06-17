@@ -9,6 +9,13 @@ import { MOCK_RESTAURANT } from '@/lib/mock/users'
 import { MOCK_MODULES } from '@/lib/mock/modules'
 import { redirect } from 'next/navigation'
 
+const ONBOARDING_STEPS = [
+  'Escolha um módulo no cardápio de soluções',
+  'Responda as perguntas do diagnóstico',
+  'Receba e copie a Receita do Sistema',
+  'Monte o módulo no Lovable com o prompt',
+]
+
 export default async function DashboardPage() {
   const user = await getSessionUser()
   if (!user) redirect('/login')
@@ -17,7 +24,7 @@ export default async function DashboardPage() {
   const supabaseOn = isSupabaseConfigured()
 
   // Get restaurant (real or mock)
-  let restaurant = supabaseOn ? await getRestaurantByUserId(user.id) : MOCK_RESTAURANT
+  const restaurant = supabaseOn ? await getRestaurantByUserId(user.id) : MOCK_RESTAURANT
 
   // No restaurant yet → redirect to onboarding
   if (supabaseOn && !restaurant) {
@@ -30,7 +37,7 @@ export default async function DashboardPage() {
 
   const activeModules = modules.filter(m => m.status === 'active')
   const installedCount = packages.length
-  const firstActiveModule = activeModules[0]
+  const isNewUser = installedCount === 0
 
   return (
     <div className="space-y-8">
@@ -44,24 +51,31 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {/* Quick start banner */}
-      {firstActiveModule && installedCount === 0 && (
+      {/* Onboarding hero — guides new users to the solutions menu */}
+      {isNewUser && (
         <div className="rounded-[18px] bg-[#235139] p-6 sm:p-8 text-white shadow-[0_4px_12px_rgba(33,30,25,0.15)]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6">
             <div className="flex-1 min-w-0">
               <p className="text-[#8FB59C] text-xs font-semibold uppercase tracking-widest mb-2">
-                Primeiro módulo disponível
+                Por onde começar
               </p>
-              <h2 className="text-xl font-semibold text-white mb-2 leading-snug">
-                {firstActiveModule.name}
+              <h2 className="text-xl font-semibold text-white mb-4 leading-snug">
+                Siga estes passos para criar seu primeiro módulo
               </h2>
-              <p className="text-[#8FB59C] text-sm leading-relaxed">
-                {firstActiveModule.short_description}
-              </p>
+              <ol className="space-y-2.5">
+                {ONBOARDING_STEPS.map((text, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#8FB59C]/30 text-[10px] font-bold text-white mt-0.5">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm text-[#DEEBE1] leading-relaxed">{text}</span>
+                  </li>
+                ))}
+              </ol>
             </div>
-            <Link href={`/app/solucoes/${firstActiveModule.slug}`} className="shrink-0">
-              <Button className="bg-[#D8A23E] hover:bg-[#C28C2A] text-[#211E19] font-semibold whitespace-nowrap">
-                Começar agora
+            <Link href="/app/solucoes" className="shrink-0 w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-[#D8A23E] hover:bg-[#C28C2A] text-[#211E19] font-semibold whitespace-nowrap">
+                Explorar cardápio
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -110,31 +124,39 @@ export default async function DashboardPage() {
 
       {/* Two columns */}
       <div className="grid sm:grid-cols-2 gap-6">
-        {/* Next steps */}
-        <div className="rounded-[18px] border border-[#E2D5C0] bg-[#FFFDF9] p-6 shadow-[0_1px_3px_rgba(33,30,25,0.08)]">
-          <h3 className="font-semibold text-[#211E19] mb-4">Próximos passos</h3>
-          <ol className="space-y-3">
-            {[
-              { step: '1', text: 'Escolha um módulo no cardápio de soluções', done: false },
-              { step: '2', text: 'Responda as perguntas do diagnóstico', done: false },
-              { step: '3', text: 'Receba e copie a Receita do Sistema', done: installedCount > 0 },
-              { step: '4', text: 'Monte o módulo no Lovable com o prompt', done: false },
-            ].map(({ step, text, done }) => (
-              <li key={step} className="flex items-start gap-3">
-                <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold mt-0.5 ${done ? 'bg-[#235139] text-white' : 'bg-[#E2D5C0] text-[#443E35]'}`}>
-                  {done ? '✓' : step}
-                </span>
-                <span className={`text-sm ${done ? 'line-through text-[#968C7B]' : 'text-[#443E35]'}`}>{text}</span>
-              </li>
-            ))}
-          </ol>
-          <Link href="/app/solucoes" className="mt-5 block">
-            <Button variant="outline" className="w-full border-[#E2D5C0] text-[#443E35] hover:bg-[#F5EEE1]">
-              Ver cardápio de soluções
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+        {isNewUser ? (
+          <div className="rounded-[18px] border border-[#E2D5C0] bg-[#FFFDF9] p-6 shadow-[0_1px_3px_rgba(33,30,25,0.08)]">
+            <h3 className="font-semibold text-[#211E19] mb-3">Como funciona</h3>
+            <p className="text-sm text-[#6F6657] leading-relaxed">
+              Escolha um módulo, responda algumas perguntas sobre o seu negócio e a IA da Casa
+              gera uma <strong className="text-[#443E35]">Receita do Sistema</strong> personalizada — com regras de negócio,
+              telas e um prompt pronto para você montar no Lovable.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-[18px] border border-[#E2D5C0] bg-[#FFFDF9] p-6 shadow-[0_1px_3px_rgba(33,30,25,0.08)]">
+            <h3 className="font-semibold text-[#211E19] mb-4">Próximos passos</h3>
+            <ol className="space-y-3">
+              {ONBOARDING_STEPS.map((text, i) => {
+                const done = i === 2 && installedCount > 0
+                return (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold mt-0.5 ${done ? 'bg-[#235139] text-white' : 'bg-[#E2D5C0] text-[#443E35]'}`}>
+                      {done ? '✓' : i + 1}
+                    </span>
+                    <span className={`text-sm ${done ? 'line-through text-[#968C7B]' : 'text-[#443E35]'}`}>{text}</span>
+                  </li>
+                )
+              })}
+            </ol>
+            <Link href="/app/solucoes" className="mt-5 block">
+              <Button variant="outline" className="w-full border-[#E2D5C0] text-[#443E35] hover:bg-[#F5EEE1]">
+                Ver cardápio de soluções
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        )}
 
         {/* Help */}
         <div className="rounded-[18px] border border-[#E2D5C0] bg-[#FFFDF9] p-6 shadow-[0_1px_3px_rgba(33,30,25,0.08)]">

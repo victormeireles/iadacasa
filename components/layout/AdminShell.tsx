@@ -3,15 +3,16 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard, Puzzle, BookOpen, Package,
-  Users, MessageSquare, Settings, ChevronRight
+  LayoutDashboard, Puzzle, Package,
+  Users, MessageSquare,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { UserRole } from '@/types/database'
+import { UserAccountMenu } from '@/components/layout/UserAccountMenu'
 
 const NAV_ITEMS = [
   { href: '/admin', label: 'Painel', icon: LayoutDashboard, exact: true },
   { href: '/admin/modulos', label: 'Módulos', icon: Puzzle },
-  { href: '/admin/blocos', label: 'Blocos de conhecimento', icon: BookOpen },
   { href: '/admin/pacotes', label: 'Pacotes gerados', icon: Package },
   { href: '/admin/usuarios', label: 'Usuários', icon: Users },
   { href: '/admin/suporte', label: 'Travas / suporte', icon: MessageSquare },
@@ -19,16 +20,17 @@ const NAV_ITEMS = [
 
 interface AdminShellProps {
   children: React.ReactNode
+  userName: string
+  userEmail: string
+  userRole: UserRole
 }
 
-export function AdminShell({ children }: AdminShellProps) {
+export function AdminShell({ children, userName, userEmail, userRole }: AdminShellProps) {
   const pathname = usePathname()
 
   return (
     <div className="flex min-h-screen bg-[#FBF7F0]">
-      {/* Sidebar */}
       <aside className="hidden w-60 shrink-0 border-r border-[#E2D5C0] bg-[#FFFDF9] md:flex md:flex-col">
-        {/* Logo */}
         <div className="flex h-14 items-center gap-2 border-b border-[#E2D5C0] px-5">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#235139]">
             <span className="text-[10px] font-bold text-white">IA</span>
@@ -39,7 +41,6 @@ export function AdminShell({ children }: AdminShellProps) {
           </div>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
           {NAV_ITEMS.map(item => {
             const active = item.exact ? pathname === item.href : pathname.startsWith(item.href)
@@ -60,32 +61,19 @@ export function AdminShell({ children }: AdminShellProps) {
             )
           })}
         </nav>
-
-        {/* Bottom */}
-        <div className="border-t border-[#E2D5C0] px-3 py-3">
-          <Link
-            href="/app/dashboard"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-[#968C7B] hover:text-[#443E35] transition-colors"
-          >
-            <ChevronRight className="h-3 w-3" />
-            Ir para área do cliente
-          </Link>
-        </div>
       </aside>
 
-      {/* Main */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Admin topbar */}
         <header className="flex h-14 items-center justify-between border-b border-[#E2D5C0] bg-[#FFFDF9] px-6">
           <p className="text-sm font-medium text-[#443E35]">
             {NAV_ITEMS.find(i => (i.exact ? pathname === i.href : pathname.startsWith(i.href)))?.label ?? 'Admin'}
           </p>
-          <Link
-            href="/app/dashboard"
-            className="text-xs text-[#968C7B] hover:text-[#235139] transition-colors"
-          >
-            ← Área do cliente
-          </Link>
+          <UserAccountMenu
+            userName={userName}
+            userEmail={userEmail}
+            userRole={userRole}
+            context="admin"
+          />
         </header>
 
         <main className="flex-1 overflow-y-auto px-6 py-8">

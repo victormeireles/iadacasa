@@ -53,3 +53,21 @@ export async function getBlocksByType(type: string): Promise<KnowledgeBlock[]> {
 
   return (data as KnowledgeBlock[]) ?? []
 }
+
+export async function getGlobalKnowledgeBlocks(): Promise<KnowledgeBlock[]> {
+  const supabase = await createServerSupabaseClient()
+  const globals = MOCK_KNOWLEDGE_BLOCKS.filter(
+    b => (b.type === 'base' || b.type === 'global_rule') && b.status === 'active'
+  )
+  if (!supabase) return globals
+
+  const { data } = await supabase
+    .from('knowledge_blocks')
+    .select('*')
+    .in('type', ['base', 'global_rule'])
+    .eq('status', 'active')
+    .order('type', { ascending: true })
+    .order('created_at', { ascending: true })
+
+  return (data as KnowledgeBlock[]) ?? globals
+}
