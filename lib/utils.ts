@@ -33,6 +33,10 @@ export function slugify(text: string): string {
     .replace(/-+/g, '-')
 }
 
+export function variableKeyFromText(text: string): string {
+  return slugify(text).replace(/-/g, '_')
+}
+
 export function truncate(text: string, length: number): string {
   if (text.length <= length) return text
   return text.slice(0, length).trim() + '…'

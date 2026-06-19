@@ -167,9 +167,12 @@ export default async function ModulePreviewPage({ params }: { params: Promise<{ 
         {moduleQuestions.length === 0 ? (
           <div className="rounded-[18px] border border-dashed border-[#E2D5C0] bg-[#FBF7F0] p-8 text-center">
             <p className="text-sm text-[#968C7B] mb-3">Nenhuma pergunta cadastrada para este módulo.</p>
-            <p className="text-xs text-[#968C7B]">
-              As perguntas são cadastradas em <code className="bg-[#F5EEE1] px-1 rounded">diagnostic_questions</code> com o <code className="bg-[#F5EEE1] px-1 rounded">module_id</code> deste módulo.
-            </p>
+            <Link
+              href={`/admin/modulos/${id}`}
+              className="text-sm text-[#235139] hover:underline"
+            >
+              Adicionar perguntas na edição do módulo
+            </Link>
           </div>
         ) : (
           <div className="rounded-[18px] border border-[#E2D5C0] bg-[#FFFDF9] divide-y divide-[#F5EEE1] shadow-[0_1px_3px_rgba(33,30,25,0.08)]">

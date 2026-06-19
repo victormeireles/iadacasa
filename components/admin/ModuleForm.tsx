@@ -11,15 +11,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { slugify } from '@/lib/utils'
 import { createModule, updateModule } from '@/app/actions/modules'
 import { ModuleKnowledgeBlocksPanel } from '@/components/admin/ModuleKnowledgeBlocksPanel'
-import type { Module, ModuleKnowledgeBlockWithBlock } from '@/types/database'
+import { DiagnosticQuestionsPanel } from '@/components/admin/DiagnosticQuestionsPanel'
+import type { DiagnosticQuestion, Module, ModuleKnowledgeBlockWithBlock } from '@/types/database'
 
 interface ModuleFormProps {
   initialData?: Partial<Module>
   moduleId?: string
   knowledgeBlocks?: ModuleKnowledgeBlockWithBlock[]
+  diagnosticQuestions?: DiagnosticQuestion[]
 }
 
-export function ModuleForm({ initialData, moduleId, knowledgeBlocks = [] }: ModuleFormProps) {
+export function ModuleForm({ initialData, moduleId, knowledgeBlocks = [], diagnosticQuestions = [] }: ModuleFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
@@ -124,15 +126,23 @@ export function ModuleForm({ initialData, moduleId, knowledgeBlocks = [] }: Modu
       </div>
 
       {moduleId ? (
-        <ModuleKnowledgeBlocksPanel
-          key={knowledgeBlocks.map(b => b.id).join('-')}
-          moduleId={moduleId}
-          initialBlocks={knowledgeBlocks}
-        />
+        <>
+          <DiagnosticQuestionsPanel
+            key={diagnosticQuestions.map(q => q.id).join('-')}
+            moduleId={moduleId}
+            initialQuestions={diagnosticQuestions}
+            scope="module"
+          />
+          <ModuleKnowledgeBlocksPanel
+            key={knowledgeBlocks.map(b => b.id).join('-')}
+            moduleId={moduleId}
+            initialBlocks={knowledgeBlocks}
+          />
+        </>
       ) : (
-        <div className="rounded-[18px] border border-dashed border-[#E2D5C0] bg-[#FBF7F0] p-6 text-center">
+        <div className="rounded-[18px] border border-dashed border-[#E2D5C0] bg-[#FBF7F0] p-6 text-center space-y-2">
           <p className="text-sm text-[#6F6657]">
-            Salve o módulo primeiro para adicionar blocos de conhecimento.
+            Salve o módulo primeiro para adicionar perguntas de diagnóstico e blocos de conhecimento.
           </p>
         </div>
       )}

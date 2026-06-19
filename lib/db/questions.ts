@@ -1,10 +1,9 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { BASE_DIAGNOSTIC_QUESTIONS, getQuestionsForModule as getMockQuestionsForModule } from '@/lib/mock/diagnostic-questions'
 import type { DiagnosticQuestion } from '@/types/database'
 
 export async function getBaseQuestions(): Promise<DiagnosticQuestion[]> {
   const supabase = await createServerSupabaseClient()
-  if (!supabase) return BASE_DIAGNOSTIC_QUESTIONS
+  if (!supabase) return []
 
   const { data } = await supabase
     .from('diagnostic_questions')
@@ -13,13 +12,12 @@ export async function getBaseQuestions(): Promise<DiagnosticQuestion[]> {
     .eq('status', 'active')
     .order('order_index')
 
-  if (!data || data.length === 0) return BASE_DIAGNOSTIC_QUESTIONS
-  return data as DiagnosticQuestion[]
+  return (data as DiagnosticQuestion[]) ?? []
 }
 
 export async function getModuleQuestions(moduleId: string): Promise<DiagnosticQuestion[]> {
   const supabase = await createServerSupabaseClient()
-  if (!supabase) return getMockQuestionsForModule(moduleId)
+  if (!supabase) return []
 
   const { data } = await supabase
     .from('diagnostic_questions')
@@ -28,6 +26,24 @@ export async function getModuleQuestions(moduleId: string): Promise<DiagnosticQu
     .eq('status', 'active')
     .order('order_index')
 
-  if (!data || data.length === 0) return getMockQuestionsForModule(moduleId)
-  return data as DiagnosticQuestion[]
+  return (data as DiagnosticQuestion[]) ?? []
+}
+
+/** Admin: perguntas ativas de um módulo ou do diagnóstico base (moduleId = null). */
+export async function getAdminQuestions(moduleId: string | null): Promise<DiagnosticQuestion[]> {
+  const supabase = await createServerSupabaseClient()
+  if (!supabase) return []
+
+  let query = supabase
+    .from('diagnostic_questions')
+    .select('*')
+    .eq('status', 'active')
+    .order('order_index')
+
+  query = moduleId === null
+    ? query.is('module_id', null)
+    : query.eq('module_id', moduleId)
+
+  const { data } = await query
+  return (data as DiagnosticQuestion[]) ?? []
 }

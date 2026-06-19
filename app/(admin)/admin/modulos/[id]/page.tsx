@@ -3,12 +3,18 @@ import { ChevronLeft } from 'lucide-react'
 import { ModuleForm } from '@/components/admin/ModuleForm'
 import { getModuleById } from '@/lib/db/modules'
 import { getBlocksForModule } from '@/lib/db/module-knowledge-blocks'
+import { getAdminQuestions } from '@/lib/db/questions'
 
 export default async function EditModulePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const isNew = id === 'novo'
   const moduleData = isNew ? undefined : await getModuleById(id)
-  const knowledgeBlocks = isNew || !moduleData ? [] : await getBlocksForModule(id)
+  const [knowledgeBlocks, diagnosticQuestions] = isNew || !moduleData
+    ? [[], []]
+    : await Promise.all([
+        getBlocksForModule(id),
+        getAdminQuestions(id),
+      ])
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -21,7 +27,12 @@ export default async function EditModulePage({ params }: { params: Promise<{ id:
           {isNew ? 'Novo módulo' : `Editar: ${moduleData?.name ?? id}`}
         </h1>
       </div>
-      <ModuleForm initialData={moduleData ?? undefined} moduleId={isNew ? undefined : id} knowledgeBlocks={knowledgeBlocks} />
+      <ModuleForm
+        initialData={moduleData ?? undefined}
+        moduleId={isNew ? undefined : id}
+        knowledgeBlocks={knowledgeBlocks}
+        diagnosticQuestions={diagnosticQuestions}
+      />
     </div>
   )
 }
