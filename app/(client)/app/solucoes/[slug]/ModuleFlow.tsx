@@ -9,6 +9,11 @@ import { DiagnosticForm } from '@/components/forms/DiagnosticForm'
 import { RecipeViewer } from '@/components/recipes/RecipeViewer'
 import { generateAndSavePackage } from '@/app/actions/packages'
 import { getModuleColors } from '@/lib/utils'
+import {
+  getPendingBaseQuestions,
+  isBaseDiagnosticComplete,
+  mergeBaseAnswers,
+} from '@/lib/diagnostic/restaurant-answers'
 import type { Module, DiagnosticQuestion, Restaurant, GeneratedPackage } from '@/types/database'
 
 type FlowStep = 'intro' | 'base-diagnostic' | 'module-diagnostic' | 'generating' | 'recipe'
@@ -19,12 +24,21 @@ interface ModuleFlowProps {
   moduleQuestions: DiagnosticQuestion[]
   restaurant: Restaurant
   userId: string
+  initialBaseAnswers?: Record<string, unknown>
 }
 
-export function ModuleFlow({ module, baseQuestions, moduleQuestions, restaurant }: ModuleFlowProps) {
+export function ModuleFlow({
+  module,
+  baseQuestions,
+  moduleQuestions,
+  restaurant,
+  initialBaseAnswers = {},
+}: ModuleFlowProps) {
   const router = useRouter()
   const [step, setStep] = useState<FlowStep>('intro')
-  const [baseAnswers, setBaseAnswers] = useState<Record<string, unknown>>({})
+  const [baseAnswers, setBaseAnswers] = useState<Record<string, unknown>>(initialBaseAnswers)
+  const pendingBaseQuestions = getPendingBaseQuestions(baseQuestions, initialBaseAnswers)
+  const baseDiagnosticComplete = isBaseDiagnosticComplete(baseQuestions, initialBaseAnswers)
   const [generatedPackage, setGeneratedPackage] = useState<GeneratedPackage | null>(null)
   const colors = getModuleColors(module.color_key)
 
@@ -108,7 +122,14 @@ export function ModuleFlow({ module, baseQuestions, moduleQuestions, restaurant 
               <span className="flex items-center gap-1.5 rounded-full bg-[#F5EEE1] px-3 py-1 capitalize">⚡ {module.difficulty_level}</span>
             </div>
             <button
-              onClick={() => setStep('base-diagnostic')}
+              onClick={() => {
+                if (baseDiagnosticComplete) {
+                  setBaseAnswers(initialBaseAnswers)
+                  setStep('module-diagnostic')
+                  return
+                }
+                setStep('base-diagnostic')
+              }}
               className="w-full rounded-xl bg-[#235139] hover:bg-[#1B3D2E] text-white font-semibold py-3 px-6 transition-colors flex items-center justify-center gap-2"
             >
               Começar diagnóstico
@@ -148,13 +169,20 @@ export function ModuleFlow({ module, baseQuestions, moduleQuestions, restaurant 
             <p className="text-sm text-[#6F6657]">Essas informações ajudam a personalizar a solução. Você só responde isso uma vez.</p>
           </div>
           <DiagnosticForm
-            questions={baseQuestions}
+            questions={pendingBaseQuestions.length > 0 ? pendingBaseQuestions : baseQuestions}
             stepTitle="Diagnóstico do seu restaurante"
-            stepDescription="Conte um pouco sobre como funciona o seu negócio hoje."
+            stepDescription={
+              pendingBaseQuestions.length < baseQuestions.length
+                ? 'Algumas informações já temos do seu cadastro. Complete só o que falta.'
+                : 'Conte um pouco sobre como funciona o seu negócio hoje.'
+            }
             stepNumber={1}
             totalSteps={2}
-            initialAnswers={{ restaurant_name: restaurant.name, segment: restaurant.segment }}
-            onSubmit={(answers) => { setBaseAnswers(answers); setStep('module-diagnostic') }}
+            initialAnswers={initialBaseAnswers}
+            onSubmit={(answers) => {
+              setBaseAnswers(mergeBaseAnswers(initialBaseAnswers, answers))
+              setStep('module-diagnostic')
+            }}
           />
         </div>
       )}
@@ -176,7 +204,7 @@ export function ModuleFlow({ module, baseQuestions, moduleQuestions, restaurant 
             stepNumber={2}
             totalSteps={2}
             onSubmit={handleModuleDiagnosticSubmit}
-            onBack={() => setStep('base-diagnostic')}
+            onBack={() => setStep(baseDiagnosticComplete ? 'intro' : 'base-diagnostic')}
           />
         </div>
       )}

@@ -1,11 +1,11 @@
 import { getAllProfiles } from '@/lib/db/profiles'
-import { getSessionUser, isSupabaseConfigured } from '@/lib/auth/session'
+import { getSessionUser } from '@/lib/auth/session'
 import { UserRoleSelector } from '@/components/admin/UserRoleSelector'
 
 export default async function AdminUsuariosPage() {
   const [currentUser, users] = await Promise.all([
     getSessionUser(),
-    isSupabaseConfigured() ? getAllProfiles() : [],
+    getAllProfiles(),
   ])
 
   const isSuperAdmin = currentUser?.role === 'super_admin'

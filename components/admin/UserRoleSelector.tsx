@@ -6,6 +6,12 @@ import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { updateUserRole } from '@/app/actions/profiles'
 import type { UserRole } from '@/types/database'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface UserRoleSelectorProps {
   profileId: string
@@ -22,7 +28,6 @@ const ROLES: Array<{ value: UserRole; label: string; color: string; desc: string
 
 export function UserRoleSelector({ profileId, currentRole, isSelf, canSetSuperAdmin }: UserRoleSelectorProps) {
   const [role, setRole] = useState<UserRole>(currentRole)
-  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const current = ROLES.find(r => r.value === role) ?? ROLES[0]
@@ -37,9 +42,8 @@ export function UserRoleSelector({ profileId, currentRole, isSelf, canSetSuperAd
   }
 
   async function handleSelect(newRole: UserRole) {
-    if (newRole === role) { setOpen(false); return }
+    if (newRole === role || loading) return
     setLoading(true)
-    setOpen(false)
 
     const result = await updateUserRole(profileId, newRole)
     if (result.error) {
@@ -52,12 +56,11 @@ export function UserRoleSelector({ profileId, currentRole, isSelf, canSetSuperAd
   }
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(o => !o)}
+    <DropdownMenu>
+      <DropdownMenuTrigger
         disabled={loading}
         className={cn(
-          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium transition-opacity',
+          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium outline-none transition-opacity',
           current.color,
           loading && 'opacity-50 cursor-not-allowed',
           !loading && 'hover:opacity-80 cursor-pointer'
@@ -65,31 +68,27 @@ export function UserRoleSelector({ profileId, currentRole, isSelf, canSetSuperAd
       >
         {loading ? '…' : current.label}
         {!loading && <ChevronDown className="h-3 w-3" />}
-      </button>
+      </DropdownMenuTrigger>
 
-      {open && (
-        <>
-          {/* Backdrop */}
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-
-          {/* Dropdown */}
-          <div className="absolute right-0 top-8 z-20 w-44 rounded-xl border border-[#E2D5C0] bg-[#FFFDF9] shadow-[0_8px_24px_rgba(33,30,25,0.12)] overflow-hidden">
-            {available.map(r => (
-              <button
-                key={r.value}
-                onClick={() => handleSelect(r.value)}
-                className="flex w-full items-start gap-2.5 px-3 py-2.5 text-left hover:bg-[#F5EEE1] transition-colors"
-              >
-                <span className={`mt-0.5 inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${r.color}`}>
-                  {r.label}
-                </span>
-                <span className="text-xs text-[#6F6657] leading-relaxed flex-1">{r.desc}</span>
-                {r.value === role && <Check className="h-3.5 w-3.5 text-[#235139] shrink-0 mt-0.5" />}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+      <DropdownMenuContent
+        align="end"
+        sideOffset={6}
+        className="w-56 rounded-xl border border-[#E2D5C0] bg-[#FFFDF9] p-0 shadow-[0_8px_24px_rgba(33,30,25,0.12)]"
+      >
+        {available.map(r => (
+          <DropdownMenuItem
+            key={r.value}
+            onClick={() => handleSelect(r.value)}
+            className="flex w-full cursor-pointer items-start gap-2.5 rounded-none px-3 py-2.5 focus:bg-[#F5EEE1]"
+          >
+            <span className={`mt-0.5 inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${r.color}`}>
+              {r.label}
+            </span>
+            <span className="flex-1 text-xs leading-relaxed text-[#6F6657]">{r.desc}</span>
+            {r.value === role && <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#235139]" />}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

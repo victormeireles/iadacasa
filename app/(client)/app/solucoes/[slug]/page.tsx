@@ -1,6 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
 import { getModuleBySlug } from '@/lib/db/modules'
+import { getBaseAnswersForRestaurant } from '@/lib/db/answers'
 import { getBaseQuestions, getModuleQuestions } from '@/lib/db/questions'
+import { baseAnswersFromRestaurant, mergeBaseAnswers } from '@/lib/diagnostic/restaurant-answers'
 import { getSessionUser, isSupabaseConfigured } from '@/lib/auth/session'
 import { getRestaurantByUserId } from '@/lib/db/restaurants'
 import { MOCK_RESTAURANT } from '@/lib/mock/users'
@@ -25,11 +27,17 @@ export default async function ModulePage({ params }: { params: Promise<{ slug: s
 
   if (supabaseOn && !restaurant) redirect('/app/restaurante')
 
-  // Load questions server-side
-  const [baseQuestions, moduleQuestions] = await Promise.all([
+  // Load questions and any previously saved base answers
+  const [baseQuestions, moduleQuestions, savedBaseAnswers] = await Promise.all([
     getBaseQuestions(),
     getModuleQuestions(module.id),
+    supabaseOn ? getBaseAnswersForRestaurant(restaurant!.id) : Promise.resolve(null),
   ])
+
+  const initialBaseAnswers = mergeBaseAnswers(
+    baseAnswersFromRestaurant(restaurant!),
+    savedBaseAnswers ?? undefined,
+  )
 
   return (
     <ModuleFlow
@@ -38,6 +46,7 @@ export default async function ModulePage({ params }: { params: Promise<{ slug: s
       moduleQuestions={moduleQuestions}
       restaurant={restaurant!}
       userId={user.id}
+      initialBaseAnswers={initialBaseAnswers}
     />
   )
 }

@@ -20,23 +20,21 @@ export async function getAllRestaurants(): Promise<Array<Restaurant & { owner_na
   const supabase = await createServerSupabaseClient()
   if (!supabase) return []
 
-  const { data } = await supabase
-    .from('restaurants')
-    .select(`
-      *,
-      profiles!restaurants_owner_user_id_fkey (
-        name,
-        email
-      )
-    `)
-    .order('created_at', { ascending: false })
+  const [{ data: restaurants, error: restaurantsError }, { data: profiles }] = await Promise.all([
+    supabase.from('restaurants').select('*').order('created_at', { ascending: false }),
+    supabase.from('profiles').select('user_id, name, email'),
+  ])
 
-  if (!data) return []
+  if (restaurantsError || !restaurants) return []
 
-  return data.map((r: Record<string, unknown>) => {
-    const profile = r.profiles as { name?: string; email?: string } | null
+  const profileByUserId = new Map(
+    (profiles ?? []).map(p => [p.user_id, p])
+  )
+
+  return restaurants.map((restaurant) => {
+    const profile = profileByUserId.get(restaurant.owner_user_id)
     return {
-      ...(r as unknown as Restaurant),
+      ...(restaurant as Restaurant),
       owner_name: profile?.name,
       owner_email: profile?.email,
     }
