@@ -1,3 +1,5 @@
+import type { PackageFile } from './packages'
+
 export type UserRole = 'client' | 'admin' | 'super_admin'
 
 export type ModuleStatus = 'draft' | 'active' | 'coming_soon' | 'archived'
@@ -184,6 +186,8 @@ export interface GeneratedPackage {
   source_blocks_json: Record<string, unknown>
   client_context_snapshot: Record<string, unknown>
   module_answers_snapshot: Record<string, unknown>
+  files_json: PackageFile[]
+  guide_variant: 'first_module' | 'additional_module'
   generated_at: string
   status: 'active' | 'archived'
 }

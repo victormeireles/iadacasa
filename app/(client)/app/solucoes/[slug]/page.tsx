@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getModuleBySlug } from '@/lib/db/modules'
 import { getBaseAnswersForRestaurant } from '@/lib/db/answers'
 import { getBaseQuestions, getModuleQuestions } from '@/lib/db/questions'
+import { isFirstModuleForRestaurant } from '@/lib/db/installations'
 import { baseAnswersFromRestaurant, mergeBaseAnswers } from '@/lib/diagnostic/restaurant-answers'
 import { getSessionUser, isSupabaseConfigured } from '@/lib/auth/session'
 import { getRestaurantByUserId } from '@/lib/db/restaurants'
@@ -39,6 +40,10 @@ export default async function ModulePage({ params }: { params: Promise<{ slug: s
     savedBaseAnswers ?? undefined,
   )
 
+  const isFirstModule = supabaseOn
+    ? await isFirstModuleForRestaurant(restaurant!.id, module.id)
+    : true
+
   return (
     <ModuleFlow
       module={module}
@@ -46,6 +51,7 @@ export default async function ModulePage({ params }: { params: Promise<{ slug: s
       moduleQuestions={moduleQuestions}
       restaurant={restaurant!}
       userId={user.id}
+      isFirstModule={isFirstModule}
       initialBaseAnswers={initialBaseAnswers}
     />
   )

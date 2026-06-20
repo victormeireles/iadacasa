@@ -50,6 +50,8 @@ async function generateWithAI(input: RecipeInput): Promise<SystemRecipeOutput> {
     checklist: buildDefaultChecklist(input.moduleSlug),
     sourceBlockIds: [],
     contextSnapshot: { restaurantName: input.restaurantName, segment: input.segment },
+    files: [],
+    guideVariant: input.installedModules.length === 0 ? 'first_module' : 'additional_module',
   }
 }
 
@@ -216,6 +218,8 @@ ${buildDefaultChecklist(input.moduleSlug).map(item => `- [ ] ${item.text}`).join
       segment: answers.segment ?? input.segment,
       isFirstModule,
     },
+    files: [],
+    guideVariant: isFirstModule ? 'first_module' : 'additional_module',
   }
 }
 
@@ -224,7 +228,7 @@ function extractPromptBlock(markdown: string): string {
   return match ? match[1] : ''
 }
 
-function buildDefaultChecklist(moduleSlug: string): ChecklistItem[] {
+export function buildDefaultChecklist(moduleSlug: string): ChecklistItem[] {
   const base: ChecklistItem[] = [
     { id: 'cl-1', text: 'Login funciona corretamente', completed: false, category: 'acesso' },
     { id: 'cl-2', text: 'Usuário dono acessa o sistema', completed: false, category: 'acesso' },

@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { ChevronLeft, Loader2, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 import { DiagnosticForm } from '@/components/forms/DiagnosticForm'
-import { RecipeViewer } from '@/components/recipes/RecipeViewer'
 import { generateAndSavePackage } from '@/app/actions/packages'
 import { getModuleColors } from '@/lib/utils'
 import {
@@ -14,9 +13,9 @@ import {
   isBaseDiagnosticComplete,
   mergeBaseAnswers,
 } from '@/lib/diagnostic/restaurant-answers'
-import type { Module, DiagnosticQuestion, Restaurant, GeneratedPackage } from '@/types/database'
+import type { Module, DiagnosticQuestion, Restaurant } from '@/types/database'
 
-type FlowStep = 'intro' | 'base-diagnostic' | 'module-diagnostic' | 'generating' | 'recipe'
+type FlowStep = 'intro' | 'base-diagnostic' | 'module-diagnostic' | 'generating'
 
 interface ModuleFlowProps {
   module: Module
@@ -24,6 +23,7 @@ interface ModuleFlowProps {
   moduleQuestions: DiagnosticQuestion[]
   restaurant: Restaurant
   userId: string
+  isFirstModule: boolean
   initialBaseAnswers?: Record<string, unknown>
 }
 
@@ -32,6 +32,7 @@ export function ModuleFlow({
   baseQuestions,
   moduleQuestions,
   restaurant,
+  isFirstModule,
   initialBaseAnswers = {},
 }: ModuleFlowProps) {
   const router = useRouter()
@@ -39,7 +40,6 @@ export function ModuleFlow({
   const [baseAnswers, setBaseAnswers] = useState<Record<string, unknown>>(initialBaseAnswers)
   const pendingBaseQuestions = getPendingBaseQuestions(baseQuestions, initialBaseAnswers)
   const baseDiagnosticComplete = isBaseDiagnosticComplete(baseQuestions, initialBaseAnswers)
-  const [generatedPackage, setGeneratedPackage] = useState<GeneratedPackage | null>(null)
   const colors = getModuleColors(module.color_key)
 
   const isComingSoon = module.status === 'coming_soon'
@@ -82,9 +82,8 @@ export function ModuleFlow({
 
       if (result.error) throw new Error(result.error)
 
-      setGeneratedPackage(result.data as GeneratedPackage)
-      setStep('recipe')
-      toast.success('Receita do Sistema gerada com sucesso!')
+      toast.success('Pacote gerado com sucesso!')
+      router.push(`/app/receitas-do-sistema/${(result.data as { id: string }).id}`)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao gerar a receita. Tente novamente.')
       setStep('module-diagnostic')
@@ -93,7 +92,7 @@ export function ModuleFlow({
 
   return (
     <div className="space-y-6">
-      {step !== 'recipe' && (
+      {step !== 'generating' && (
         <Link href="/app/solucoes" className="inline-flex items-center gap-1.5 text-sm text-[#6F6657] hover:text-[#443E35] transition-colors">
           <ChevronLeft className="h-4 w-4" />
           Cardápio de soluções
@@ -142,8 +141,8 @@ export function ModuleFlow({
               {[
                 'Você responde perguntas sobre o seu restaurante (uma vez só)',
                 `Você responde perguntas específicas sobre ${module.name}`,
-                'A IA da Casa gera a Receita do Sistema personalizada',
-                'Você copia o prompt e monta o módulo no Lovable',
+                'A IA da Casa monta seus arquivos de contexto personalizados',
+                'Você segue o passo a passo para montar no Lovable',
               ].map((text, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm text-[#443E35]">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#DEEBE1] text-[#235139] font-semibold text-xs mt-0.5">{i + 1}</span>
@@ -152,12 +151,14 @@ export function ModuleFlow({
               ))}
             </ol>
           </div>
+          {isFirstModule && (
           <div className="rounded-lg bg-[#F9EFD6] border border-[#EDCD8A] p-4">
             <p className="text-sm text-[#A9761F] leading-relaxed">
-              <strong>Este é o seu primeiro módulo.</strong> A Receita do Sistema vai incluir a estrutura
+              <strong>Este é o seu primeiro módulo.</strong> O pacote vai incluir a estrutura
               mínima do sistema (usuários, permissões, cadastros base) junto com o módulo escolhido.
             </p>
           </div>
+          )}
         </div>
       )}
 
@@ -216,24 +217,9 @@ export function ModuleFlow({
             <Loader2 className="h-7 w-7 text-[#235139] animate-spin" />
           </div>
           <div className="text-center">
-            <p className="font-semibold text-[#211E19] mb-1">Preparando sua Receita do Sistema</p>
-            <p className="text-sm text-[#6F6657]">Combinando suas respostas com os documentos internos da IA da Casa…</p>
+            <p className="font-semibold text-[#211E19] mb-1">Montando seu pacote</p>
+            <p className="text-sm text-[#6F6657]">Combinando suas respostas com os documentos do módulo…</p>
           </div>
-        </div>
-      )}
-
-      {/* ── Recipe ── */}
-      {step === 'recipe' && generatedPackage && (
-        <div className="max-w-3xl">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => router.push('/app/solucoes')} className="inline-flex items-center gap-1.5 text-sm text-[#6F6657] hover:text-[#443E35] transition-colors">
-              <ChevronLeft className="h-4 w-4" />
-              Cardápio
-            </button>
-            <span className="text-[#E2D5C0]">/</span>
-            <span className="text-sm text-[#443E35]">Receita do Sistema</span>
-          </div>
-          <RecipeViewer recipe={generatedPackage} />
         </div>
       )}
     </div>

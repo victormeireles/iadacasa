@@ -1,4 +1,5 @@
 import type { GeneratedPackage, ChecklistItem } from './database'
+import type { PackageFile, GuideVariant } from './packages'
 
 export interface SystemRecipeOutput {
   title: string
@@ -7,6 +8,8 @@ export interface SystemRecipeOutput {
   checklist: ChecklistItem[]
   sourceBlockIds: string[]
   contextSnapshot: Record<string, unknown>
+  files: PackageFile[]
+  guideVariant: GuideVariant
 }
 
 export interface RecipeSection {

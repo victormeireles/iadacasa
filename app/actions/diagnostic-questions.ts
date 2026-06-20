@@ -148,7 +148,7 @@ export async function reorderDiagnosticQuestions(
   if (!supabase) return { error: 'Supabase não configurado' }
 
   const updates = orderedQuestionIds.map((questionId, index) => {
-    let query = supabase
+    const query = supabase
       .from('diagnostic_questions')
       .update({ order_index: index })
       .eq('id', questionId)

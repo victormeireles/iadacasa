@@ -6,10 +6,13 @@
  * blocks (base + global_rule) only on the restaurant's first module.
  */
 
-import { generateSystemRecipe } from '@/lib/ai/generate-system-recipe'
+import { buildDefaultChecklist } from '@/lib/ai/generate-system-recipe'
 import { getBlocksForModule } from '@/lib/db/module-knowledge-blocks'
 import { isFirstModuleForRestaurant } from '@/lib/db/installations'
 import { getGlobalKnowledgeBlocks } from '@/lib/db/knowledge-blocks'
+import { assemblePackageFiles } from '@/lib/services/package-file-assembler'
+import { buildExternalPrompt } from '@/lib/services/package-prompt-builder'
+import { buildPackageSummary } from '@/lib/services/package-summary-builder'
 import type {
   GeneratedPackage,
   KnowledgeBlock,
@@ -47,32 +50,10 @@ function globalBlocksAsModuleLinks(
   }))
 }
 
-function resolveBlocks(blocks: ModuleKnowledgeBlockWithBlock[]) {
-  const active = blocks.filter(b => b.knowledge_block.status === 'active')
-
-  const promptBlock = active.find(b =>
-    b.usage_type === 'prompt' || b.knowledge_block.type === 'module'
-  )
-  const moduleMarkdown = promptBlock?.knowledge_block.content_markdown
-    ?? active.find(b => b.knowledge_block.type === 'module')?.knowledge_block.content_markdown
-    ?? ''
-
-  const ruleBlocks = active.filter(b =>
-    b.usage_type === 'rule' || b.knowledge_block.type === 'global_rule'
-  )
-  const contextBlocks = active.filter(b =>
-    ['required_context', 'optional_context', 'dependency'].includes(b.usage_type)
-    && b.knowledge_block.type !== 'module'
-  )
-
-  const globalRules = [
-    ...contextBlocks.map(b => b.knowledge_block.content_markdown),
-    ...ruleBlocks.map(b => b.knowledge_block.content_markdown),
-  ].join('\n\n---\n\n')
-
-  const sourceBlockIds = active.map(b => b.knowledge_block_id)
-
-  return { moduleMarkdown, globalRules, sourceBlockIds }
+function resolveSourceBlockIds(blocks: ModuleKnowledgeBlockWithBlock[]) {
+  return blocks
+    .filter(b => b.knowledge_block.status === 'active')
+    .map(b => b.knowledge_block_id)
 }
 
 export async function generatePackage(input: PackageGeneratorInput): Promise<SystemRecipeOutput> {
@@ -89,23 +70,52 @@ export async function generatePackage(input: PackageGeneratorInput): Promise<Sys
     ...moduleBlocks,
   ]
 
-  const { moduleMarkdown, globalRules, sourceBlockIds } = resolveBlocks(allBlocks)
+  const sourceBlockIds = resolveSourceBlockIds(allBlocks)
+  const guideVariant = isFirstModule ? 'first_module' : 'additional_module'
 
-  const recipe = await generateSystemRecipe({
+  const files = assemblePackageFiles({
     restaurantName: input.restaurantName,
     segment: input.segment,
     moduleName: input.moduleName,
     moduleSlug: input.moduleSlug,
-    installedModules: input.installedModules,
     baseAnswers: input.baseAnswers,
     moduleAnswers: input.moduleAnswers,
-    moduleMarkdown,
-    globalRules,
+    blocks: allBlocks,
   })
 
+  if (files.length <= 1) {
+    throw new Error(
+      'Não foi possível montar os arquivos deste módulo. Tente novamente em alguns minutos ou fale com o suporte.',
+    )
+  }
+
+  const promptForExternalTool = buildExternalPrompt({
+    restaurantName: input.restaurantName,
+    moduleName: input.moduleName,
+    files,
+    guideVariant,
+  })
+
+  const blockTitles = files.filter(f => f.knowledge_block_id).map(f => f.title)
+
   return {
-    ...recipe,
-    sourceBlockIds: recipe.sourceBlockIds.length > 0 ? recipe.sourceBlockIds : sourceBlockIds,
+    title: `Pacote — ${isFirstModule ? 'Base + ' : ''}${input.moduleName}`,
+    markdown: buildPackageSummary({
+      moduleName: input.moduleName,
+      restaurantName: input.restaurantName,
+      isFirstModule,
+      blockTitles,
+    }),
+    promptForExternalTool,
+    checklist: buildDefaultChecklist(input.moduleSlug),
+    sourceBlockIds,
+    contextSnapshot: {
+      restaurantName: input.restaurantName,
+      segment: input.segment,
+      isFirstModule,
+    },
+    files,
+    guideVariant,
   }
 }
 
@@ -124,6 +134,8 @@ export function buildGeneratedPackageRecord(
     source_blocks_json: { block_ids: recipe.sourceBlockIds },
     client_context_snapshot: recipe.contextSnapshot,
     module_answers_snapshot: { base: input.baseAnswers, module: input.moduleAnswers },
+    files_json: recipe.files,
+    guide_variant: recipe.guideVariant,
     generated_at: new Date().toISOString(),
     status: 'active',
   }
